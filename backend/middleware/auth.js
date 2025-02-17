@@ -44,18 +44,18 @@ export const adminMiddleware = asyncHandler(async (req, res, next) => {
   res.status(403).json({ message: "Only admins can do this!" });
 });
 
-// export const creatorMiddleware = asyncHandler(async (req, res, next) => {
-//   if (
-//     (req.user && req.user.role === "creator") ||
-//     (req.user && req.user.role === "admin")
-//   ) {
-//     // if user is creator, move to the next middleware/controller
-//     next();
-//     return;
-//   }
-//   // if not creator, send 403 Forbidden --> terminate the request
-//   res.status(403).json({ message: "Only creators can do this!" });
-// });
+export const creatorMiddleware = asyncHandler(async (req, res, next) => {
+  if (
+    (req.user && req.user.role === "creator") ||
+    (req.user && req.user.role === "admin")
+  ) {
+    // if user is creator, move to the next middleware/controller
+    next();
+    return;
+  }
+  // if not creator, send 403 Forbidden --> terminate the request
+  res.status(403).json({ message: "Only creators can do this!" });
+});
 
 // // verified middleware
 // export const verifiedMiddleware = asyncHandler(async (req, res, next) => {

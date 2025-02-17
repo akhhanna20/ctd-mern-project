@@ -5,9 +5,14 @@ import {
   logoutUser,
   getUser,
   updateUser,
+  userLoginStatus,
 } from "../controllersAuth/userController.js";
-import { adminMiddleware, protect } from "../middleware/auth.js";
-import { deleteUser } from "../controllersAuth/adminController.js";
+import {
+  adminMiddleware,
+  creatorMiddleware,
+  protect,
+} from "../middleware/auth.js";
+import { deleteUser, getAllUsers } from "../controllersAuth/adminController.js";
 // import {
 //   changePassword,
 //   forgotPassword,
@@ -42,11 +47,11 @@ router.patch("/user", protect, updateUser);
 // admin route
 router.delete("/admin/users/:id", protect, adminMiddleware, deleteUser);
 
-// // get all users
-// router.get("/admin/users", protect, creatorMiddleware, getAllUsers);
+// get all users
+router.get("/admin/users", protect, creatorMiddleware, getAllUsers);
 
-// // login status
-// router.get("/login-status", userLoginStatus);
+// login status
+router.get("/login-status", userLoginStatus);
 
 // // email verification
 // router.post("/verify-email", protect, verifyEmail);
