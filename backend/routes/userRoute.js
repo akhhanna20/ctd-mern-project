@@ -6,7 +6,8 @@ import {
   getUser,
   updateUser,
 } from "../controllersAuth/userController.js";
-import { protect } from "../middleware/auth.js";
+import { adminMiddleware, protect } from "../middleware/auth.js";
+import { deleteUser } from "../controllersAuth/adminController.js";
 // import {
 //   changePassword,
 //   forgotPassword,
@@ -38,8 +39,8 @@ router.get("/logout", logoutUser);
 router.get("/user", protect, getUser);
 router.patch("/user", protect, updateUser);
 
-// // admin route
-// router.delete("/admin/users/:id", protect, adminMiddleware, deleteUser);
+// admin route
+router.delete("/admin/users/:id", protect, adminMiddleware, deleteUser);
 
 // // get all users
 // router.get("/admin/users", protect, creatorMiddleware, getAllUsers);

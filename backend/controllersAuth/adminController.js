@@ -1,54 +1,18 @@
-import express from "express";
-import {
-  changePassword,
-  forgotPassword,
-  getUser,
-  loginUser,
-  logoutUser,
-  registerUser,
-  resetPassword,
-  updateUser,
-  userLoginStatus,
-  verifyEmail,
-  verifyUser,
-} from "./auth/userController.js";
-import {
-  adminMiddleware,
-  creatorMiddleware,
-  protect,
-} from "../middleware/authMiddleware.js";
-import { deleteUser, getAllUsers } from "./auth/adminController.js";
+import asyncHandler from "express-async-handler";
+import User from "../models/auth/UserModel.js";
 
-const router = express.Router();
+export const deleteUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.get("/logout", logoutUser);
-router.get("/user", protect, getUser);
-router.patch("/user", protect, updateUser);
-
-// admin route
-router.delete("/admin/users/:id", protect, adminMiddleware, deleteUser);
-
-// get all users
-router.get("/admin/users", protect, creatorMiddleware, getAllUsers);
-
-// login status
-router.get("/login-status", userLoginStatus);
-
-// email verification
-router.post("/verify-email", protect, verifyEmail);
-
-// veriify user --> email verification
-router.post("/verify-user/:verificationToken", verifyUser);
-
-// forgot password
-router.post("/forgot-password", forgotPassword);
-
-//reset password
-router.post("/reset-password/:resetPasswordToken", resetPassword);
-
-// change password ---> user must be logged in
-router.patch("/change-password", protect, changePassword);
-
-export default router;
+  //attempt to delete user
+  try {
+    const user = await User.findByIdAndDelete(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({ message: "User deleted" });
+  } catch (error) {
+    console.log("Error deleting user: ", error);
+    res.status(500).json({ message: "Error deleting user" });
+  }
+});
