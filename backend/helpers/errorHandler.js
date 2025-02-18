@@ -12,4 +12,10 @@ const errorHandler = (err, req, res, next) => {
   res.status(statusCode); // set the status code of the response
 };
 
+//log the error to the console
+errorHandler.log = (err, req, res, next) => {
+  console.error(err);
+  next();
+};
+
 export default errorHandler;

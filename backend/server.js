@@ -4,12 +4,16 @@ import { connectDB } from "./config/db.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import fs from "node:fs";
+import errorHandler from "./helpers/errorHandler.js";
 
 dotenv.config();
 
 const app = express();
 
 const port = process.env.PORT || 8000;
+app.get("/tasks", (req, res) => {
+  res.send("Server is running");
+});
 
 app.get("/tasks", (req, res) => {});
 
@@ -23,6 +27,9 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+//error handler middleware
+app.use(errorHandler);
 
 //routes
 const routeFiles = fs.readdirSync("./backend/routes");
