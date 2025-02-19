@@ -101,3 +101,31 @@ export const updateTask = asyncHandler(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// delete task
+export const deleteTask = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { id } = req.params; // task id
+    if (!id) {
+      // check if task id is provided
+      return res.status(400).json({ message: "Please provide a task id" });
+    }
+    const task = await Task.findById(id);
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    //check if user is creator
+    if (!task.user.equals(userId)) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized to access this task" });
+    }
+    // delete task
+    await Task.findByIdAndDelete(id);
+    return res.status(200).json({ message: "Task deleted" });
+  } catch (error) {
+    console.log("Error deleting task: ", error.message);
+    res.status(500).json({ message: error.message });
+  }
+});

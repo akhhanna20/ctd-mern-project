@@ -15,7 +15,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   //validation
   if (!name || !email || !password) {
     // 400 Bad Request
-    res.status(400).json({ message: "All fields are required" });
+    return res.status(400).json({ message: "All fields are required" });
   }
 
   // check password length
