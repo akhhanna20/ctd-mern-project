@@ -9,29 +9,6 @@ import errorHandler from "./helpers/errorHandler.js";
 dotenv.config();
 const app = express();
 
-// CORS configuration
-// const allowedOrigins = ["http://localhost:3000", "http://localhost:5173"];
-
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       if (!origin || allowedOrigins.includes(origin)) {
-//         callback(null, true);
-//       } else {
-//         callback(new Error("Not allowed by CORS"));
-//       }
-//     },
-//     credentials: true,
-//   })
-// );
-
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-//   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-//   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-//   next();
-// });
-
 const port = process.env.PORT || 8000;
 app.get("/tasks", (req, res) => {
   res.send("Server is running");
