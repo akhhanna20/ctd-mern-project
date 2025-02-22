@@ -12,8 +12,7 @@ const Footer = () => {
       }}
     >
       <p>
-        &copy; {new Date().getFullYear()} Your Company Name. All rights
-        reserved.
+        &copy; {new Date().getFullYear()} Hanna Akhramchuk. All rights reserved.
       </p>
     </footer>
   );

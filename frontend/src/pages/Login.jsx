@@ -108,18 +108,29 @@ function App() {
       console.log("Success:", data);
 
       localStorage.setItem("token", data.token); // ✅ Store token
-      localStorage.setItem("user", JSON.stringify(data.user));
+      console.log(data.token);
+      localStorage.setItem("user", JSON.stringify(data.name));
+      console.log(data.name);
 
       alert("Login successful!");
-      window.location.href = "/tasks"; // Redirect
+
+      console.log(data.role);
+      // ✅ Check if user exists before accessing role
+      if (data && data.role === "admin") {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/tasks";
+      }
+      // window.location.href = "/tasks"; // Redirect
     } catch (error) {
       console.error("Error:", error.message);
       alert(error.message);
     }
   };
+  ///////
 
   return (
-    <Center height="100vh">
+    <Center height="96vh">
       <Box
         bg="white"
         p={8}

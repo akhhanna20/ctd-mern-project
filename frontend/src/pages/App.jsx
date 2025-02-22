@@ -5,6 +5,7 @@ import Register from "./Register";
 import Tasks from "../Tasks";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
+import AdminPage from "./AdminPage";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route
           path="/tasks"
           element={

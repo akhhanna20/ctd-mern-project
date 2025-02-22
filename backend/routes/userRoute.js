@@ -48,7 +48,7 @@ router.patch("/user", protect, updateUser);
 router.delete("/admin/users/:id", protect, adminMiddleware, deleteUser);
 
 // get all users
-router.get("/admin/users", protect, creatorMiddleware, getAllUsers);
+router.get("/admin/users", protect, adminMiddleware, getAllUsers);
 
 // login status
 router.get("/login-status", userLoginStatus);

@@ -109,7 +109,7 @@ export const adminMiddleware = asyncHandler(async (req, res, next) => {
   }
 
   // If not admin, send 403 Forbidden --> terminate the request
-  res.status(403).json({ message: "Only admins can do this!" });
+  res.status(401).json({ message: "Only admins can do this!" });
 });
 
 // Creator middleware
@@ -124,5 +124,5 @@ export const creatorMiddleware = asyncHandler(async (req, res, next) => {
   }
 
   // If not creator, send 403 Forbidden --> terminate the request
-  res.status(403).json({ message: "Only creators can do this!" });
+  res.status(401).json({ message: "Only creators can do this!" });
 });

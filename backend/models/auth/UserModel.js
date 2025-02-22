@@ -32,11 +32,6 @@ const UserSchema = new mongoose.Schema(
       enum: ["user", "admin", "creator"],
       default: "user",
     },
-
-    // isVerified: {
-    //   type: Boolean,
-    //   default: false,
-    // },
   },
   { timestamps: true, minimize: true }
 );
