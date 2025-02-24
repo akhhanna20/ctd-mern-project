@@ -18,7 +18,8 @@ const __dirname = path.resolve();
 //middleware
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin:
+      process.env.CLIENT_URL || "https://ctd-mern-project-hanna.onrender.com", // Set this to the correct URL
     credentials: true,
   })
 );
