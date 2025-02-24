@@ -15,17 +15,20 @@ const HomePage = () => {
 
         {/* Buttons to navigate to different sections */}
 
-        <Link to="/login">
-          <Button colorScheme="teal" size="lg">
-            Login
-          </Button>
-        </Link>
-
-        <Link to="/register">
-          <Button colorScheme="teal" size="lg">
-            Register
-          </Button>
-        </Link>
+        <Box display="flex" justifyContent="center" gap={4}>
+          {" "}
+          {/* Use a flex container with gap */}
+          <Link to="/login">
+            <Button colorScheme="teal" size="lg">
+              Login
+            </Button>
+          </Link>
+          <Link to="/register">
+            <Button colorScheme="teal" size="lg">
+              Register
+            </Button>
+          </Link>
+        </Box>
       </Box>
     </Center>
   );
