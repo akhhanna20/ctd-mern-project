@@ -16,13 +16,13 @@ const HomePage = () => {
         {/* Buttons to navigate to different sections */}
 
         <Link to="/login">
-          <Button colorScheme="blue" size="lg">
+          <Button colorScheme="teal" size="lg">
             Login
           </Button>
         </Link>
 
         <Link to="/register">
-          <Button colorScheme="blue" size="lg" mt={3}>
+          <Button colorScheme="teal" size="lg">
             Register
           </Button>
         </Link>
