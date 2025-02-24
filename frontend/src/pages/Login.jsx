@@ -31,6 +31,7 @@ function Login() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          accept: "application/json",
         },
         body: JSON.stringify({ email, password }),
         credentials: "include", // ✅ Ensures cookies are sent

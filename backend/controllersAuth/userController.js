@@ -93,7 +93,7 @@ export const loginUser = asyncHandler(async (req, res) => {
       path: "/",
       httpOnly: true,
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      sameSite: true,
+      sameSite: "none", // cross-site access --> allow all third-party cookies
       secure: true,
     });
 
@@ -178,23 +178,77 @@ export const updateUser = asyncHandler(async (req, res) => {
 //     res.status(401).json(false);
 //   }
 // });
+//=====
+// export const userLoginStatus = asyncHandler(async (req, res) => {
+//   const token = req.cookies?.token;
+
+//   if (!token) {
+//     return res.status(200).json({ isAuthenticated: false });
+//   }
+
+//   try {
+//     // verify the token
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+//     if (decoded) {
+//       return res.status(200).json({ isAuthenticated: true });
+//     } else {
+//       return res.status(200).json({ isAuthenticated: false });
+//     }
+//   } catch (error) {
+//     return res.status(200).json({ isAuthenticated: false });
+//   }
+// });
+// export const userLoginStatus = asyncHandler(async (req, res) => {
+//   const token = req.cookies?.token;
+
+//   // If there's no token, the user is not authenticated
+//   if (!token) {
+//     return res.status(200).json({ isAuthenticated: false });
+//   }
+
+//   try {
+//     // Verify the token
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+//     // If token is valid, user is authenticated
+//     if (decoded) {
+//       return res.status(200).json({ isAuthenticated: true });
+//     } else {
+//       return res.status(200).json({ isAuthenticated: false });
+//     }
+//   } catch (error) {
+//     // If an error occurs while verifying token (e.g., invalid token), return false
+//     return res.status(200).json({ isAuthenticated: false });
+//   }
+// });
 export const userLoginStatus = asyncHandler(async (req, res) => {
   const token = req.cookies?.token;
 
+  // If there's no token, return Unauthorized
   if (!token) {
-    return res.status(200).json({ isAuthenticated: false });
+    return res
+      .status(200)
+      .json({ isAuthenticated: false, message: "Unauthorized" });
   }
 
   try {
-    // verify the token
+    // Verify the token using the secret key
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     if (decoded) {
-      return res.status(200).json({ isAuthenticated: true });
+      return res
+        .status(200)
+        .json({ isAuthenticated: true, user: decoded.userId });
     } else {
-      return res.status(200).json({ isAuthenticated: false });
+      return res
+        .status(200)
+        .json({ isAuthenticated: false, message: "Invalid token" });
     }
   } catch (error) {
-    return res.status(200).json({ isAuthenticated: false });
+    console.error("Token verification failed:", error.message);
+    return res
+      .status(200)
+      .json({ isAuthenticated: false, message: "Invalid or expired token" });
   }
 });

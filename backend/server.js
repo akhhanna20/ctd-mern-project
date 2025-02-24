@@ -5,36 +5,36 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import fs from "node:fs";
 import errorHandler from "./helpers/errorHandler.js";
+import path from "path";
+import userRoute from "./routes/userRoute.js";
+import tasksRoute from "./routes/tasksRoute.js";
 
 dotenv.config();
 const app = express();
-
 const port = process.env.PORT || 8000;
-app.get("/tasks", (req, res) => {
-  res.send("Server is running");
-});
 
-app.get("/", (req, res) => {
-  res.send("Server is running");
-});
+const __dirname = path.resolve();
 
 //middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use("/api/v1", userRoute);
+app.use("/api/v1", tasksRoute);
 
 //error handler middleware
 app.use(errorHandler);
 
 //routes
-const routeFiles = fs.readdirSync("./backend/routes");
-
+//const routeFiles = fs.readdirSync("./backend/routes");
+const routeFiles = fs.readdirSync(path.join(__dirname, "backend", "routes"));
 routeFiles.forEach((file) => {
   //use dynamic imports
   import(`./routes/${file}`)
@@ -45,6 +45,14 @@ routeFiles.forEach((file) => {
       console.log("Failed to load route: ", error);
     });
 });
+
+//set static folder
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+  app.get("*", (req, res) =>
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+  );
+}
 
 const server = async () => {
   try {

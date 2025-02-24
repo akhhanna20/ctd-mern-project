@@ -5,6 +5,7 @@ import Tasks from "../Tasks";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import AdminPage from "./AdminPage";
+import HomePage from "./HomePage";
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
       <Navbar />
       <Footer />
       <Routes>
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminPage />} />

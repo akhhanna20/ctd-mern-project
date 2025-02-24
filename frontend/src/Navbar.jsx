@@ -12,6 +12,9 @@ const Navbar = () => {
           "http://localhost:8000/api/v1/login-status",
           {
             method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
             credentials: "include", // Include cookies (important for httpOnly cookies)
           }
         );
