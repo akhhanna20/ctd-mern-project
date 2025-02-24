@@ -25,9 +25,15 @@ const Task = () => {
   const [description, setDescription] = useState("");
   const [daysToComplete, setDaysToComplete] = useState("");
   const [taskToUpdate, setTaskToUpdate] = useState(null); // For updating a task
+  const [status, setStatus] = useState("active");
 
   // Chakra UI modal hooks
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const user = JSON.parse(localStorage.getItem("user")); // Parse JSON string to object
+  const userName =
+    user && user.name
+      ? user.name.charAt(0).toUpperCase() + user.name.slice(1)
+      : "Guest";
 
   useEffect(() => {
     fetchTasks();
@@ -48,7 +54,9 @@ const Task = () => {
       }
 
       const data = await response.json();
+
       setTasks(data.tasks); // Update state with tasks
+      console.log(data.tasks);
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
@@ -64,7 +72,7 @@ const Task = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ title, description, daysToComplete }),
+        body: JSON.stringify({ title, description, daysToComplete, status }),
         credentials: "include", // Include credentials if using cookies for authentication
       });
 
@@ -74,6 +82,7 @@ const Task = () => {
         setTitle("");
         setDescription("");
         setDaysToComplete("");
+        setStatus("active");
         onClose(); // Close the modal after task creation
       } else {
         console.error("Error creating task");
@@ -119,13 +128,14 @@ const Task = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ title, description, daysToComplete }),
+          body: JSON.stringify({ title, description, daysToComplete, status }),
           credentials: "include",
         }
       );
 
       if (response.ok) {
         const updatedTask = await response.json();
+        console.log(updatedTask);
         setTasks(
           tasks.map((task) =>
             task._id === updatedTask._id ? updatedTask : task
@@ -135,6 +145,9 @@ const Task = () => {
         setTitle("");
         setDescription("");
         setDaysToComplete("");
+        setStatus("active");
+        // Close the modal after task update
+        onClose();
       } else {
         console.error("Error updating task");
       }
@@ -158,10 +171,10 @@ const Task = () => {
           mb={8}
         >
           {tasks.length === 1
-            ? `Hello! You have 1 task`
+            ? `Hello, ${userName}! You have 1 task`
             : tasks.length > 1
-            ? `Hello! You have ${tasks.length} tasks`
-            : "Hello! You have no tasks"}
+            ? `Hello, ${userName}! You have ${tasks.length} tasks`
+            : `Hello, ${userName}! You have no tasks`}
         </Text>
 
         {/* Button to open Create Task Modal */}
@@ -209,6 +222,23 @@ const Task = () => {
                       placeholder="Days"
                     />
                   </FormControl>
+                  <FormControl isRequired>
+                    <FormLabel>Status</FormLabel>
+                    <select
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value)}
+                      style={{
+                        padding: "8px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        width: "100%",
+                      }}
+                    >
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                  </FormControl>
+
                   <ModalFooter>
                     <Button colorScheme="teal" type="submit">
                       {taskToUpdate ? "Update Task" : "Create Task"}
@@ -237,7 +267,13 @@ const Task = () => {
                 borderRadius="md"
                 textAlign="center"
               >
-                <Box width="100%" bg="teal.500" p={2} borderRadius="md">
+                {/* Conditionally change the background color based on status */}
+                <Box
+                  width="100%"
+                  bg={task.status === "inactive" ? "gray.400" : "teal.500"}
+                  p={2}
+                  borderRadius="md"
+                >
                   <Text fontSize="lg" fontWeight="bold" color="gray.100">
                     {task.title}
                   </Text>
@@ -247,6 +283,19 @@ const Task = () => {
                   {task.description}
                 </Text>
                 <Text>{task.daysToComplete} days</Text>
+
+                {/* ✅ Show Status */}
+                <Text
+                  color={task.status === "active" ? "green.500" : "red.500"}
+                >
+                  Status: <b>{task.status}</b>
+                </Text>
+
+                {/* ✅ Show Created Date */}
+                <Text>
+                  Created At: {new Date(task.createdAt).toLocaleDateString()}
+                </Text>
+
                 <Box display="flex" justifyContent="center" gap={4}>
                   <Button
                     colorScheme="red"

@@ -1,76 +1,5 @@
-// import { useState } from "react";
-// // import "./App.css";
-
-// function App() {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-
-//   const loginUser = async (e) => {
-//     e.preventDefault();
-
-//     try {
-//       const response = await fetch("http://localhost:8000/api/v1/login", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ email, password }),
-//         credentials: "include",
-//       });
-
-//       if (!response.ok) {
-//         const errorData = await response.json();
-//         throw new Error(errorData.message || "Login failed");
-//       }
-
-//       const data = await response.json();
-//       console.log("Success:", data);
-
-//       // Store only user info (avoid storing sensitive tokens in localStorage)
-//       //localStorage.setItem("user", JSON.stringify(data.user));
-//       localStorage.setItem("token", data.token); // ✅ Store token
-//       localStorage.setItem("user", JSON.stringify(data.user));
-
-//       alert("Login successful!");
-//       window.location.href = "/tasks"; // Redirect
-//     } catch (error) {
-//       console.error("Error:", error.message);
-//       alert(error.message);
-//     }
-//   };
-
-//   // // Check if user is already logged in
-//   // if (localStorage.getItem("user")) {
-//   //   window.location.href = "/tasks"; // Redirect
-//   // }
-//   //
-
-//   return (
-//     <div>
-//       <h1>Login</h1>
-//       <form onSubmit={loginUser}>
-//         <input
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//           type="email"
-//           placeholder="Email"
-//         />
-//         <br />
-//         <input
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//           type="password"
-//           placeholder="Password"
-//         />
-//         <br />
-//         <button type="submit">Login</button>
-//       </form>
-//     </div>
-//   );
-// }
-
-// export default App;
 import { useState } from "react";
+//import { useNavigate } from "react-router-dom"; // ✅ Use for navigation
 import {
   Box,
   Button,
@@ -80,14 +9,22 @@ import {
   Heading,
   Input,
   Stack,
+  Alert,
+  AlertIcon,
+  Spinner,
 } from "@chakra-ui/react";
 
-function App() {
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  //const navigate = useNavigate(); // ✅ Use React Router for navigation
 
   const loginUser = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     try {
       const response = await fetch("http://localhost:8000/api/v1/login", {
@@ -96,7 +33,7 @@ function App() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-        credentials: "include",
+        credentials: "include", // ✅ Ensures cookies are sent
       });
 
       if (!response.ok) {
@@ -106,28 +43,27 @@ function App() {
 
       const data = await response.json();
       console.log("Success:", data);
-
-      localStorage.setItem("token", data.token); // ✅ Store token
-      console.log(data.token);
-      localStorage.setItem("user", JSON.stringify(data.name));
-      console.log(data.name);
-
-      alert("Login successful!");
-
       console.log(data.role);
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ name: data.name, role: data.role })
+      );
+
       // ✅ Check if user exists before accessing role
       if (data && data.role === "admin") {
         window.location.href = "/admin";
+        // navigate("/admin");
       } else {
         window.location.href = "/tasks";
+        // navigate("/tasks");
       }
-      // window.location.href = "/tasks"; // Redirect
     } catch (error) {
-      console.error("Error:", error.message);
-      alert(error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
-  ///////
 
   return (
     <Center height="96vh">
@@ -141,6 +77,14 @@ function App() {
         <Heading mb={6} textAlign="center">
           Login
         </Heading>
+
+        {error && (
+          <Alert status="error" mb={4}>
+            <AlertIcon />
+            {error}
+          </Alert>
+        )}
+
         <form onSubmit={loginUser}>
           <Stack spacing={4}>
             <FormControl isRequired>
@@ -165,10 +109,11 @@ function App() {
 
             <Button
               type="submit"
-              colorScheme="teal" // Light green button
+              colorScheme="teal"
               width="full"
+              isDisabled={loading} // ✅ Disable when loading
             >
-              Login
+              {loading ? <Spinner size="sm" /> : "Login"}
             </Button>
           </Stack>
         </form>
@@ -177,4 +122,4 @@ function App() {
   );
 }
 
-export default App;
+export default Login;

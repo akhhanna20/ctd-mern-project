@@ -3,10 +3,6 @@ import User from "../models/auth/UserModel.js";
 import generateToken from "../helpers/generateToken.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-// import Token from "../../models/auth/Token.js";
-// import crypto from "node:crypto";
-// import hashToken from "../../helpers/hashToken.js";
-// import sendEmail from "../../helpers/sendEmail.js";
 
 // // user registration
 export const registerUser = asyncHandler(async (req, res) => {
@@ -53,8 +49,8 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    const { _id, name, email, role, bio, isVerified } = user;
-    res.status(201).json({ _id, name, email, role, bio, isVerified, token });
+    const { _id, name, email, role, isVerified } = user;
+    res.status(201).json({ _id, name, email, role, token });
   } else {
     res.status(400).json({ message: "Invalid user data" });
   }
@@ -90,7 +86,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   const token = generateToken(userExists._id);
 
   if (userExists && isMatch) {
-    const { _id, name, email, role, bio, isVerified } = userExists;
+    const { _id, name, email, role } = userExists;
 
     // set the token in the cookie
     res.cookie("token", token, {
@@ -107,8 +103,7 @@ export const loginUser = asyncHandler(async (req, res) => {
       name,
       email,
       role,
-      bio,
-      isVerified,
+      // isVerified,
       token,
     });
   } else {
@@ -148,10 +143,9 @@ export const updateUser = asyncHandler(async (req, res) => {
 
   if (user) {
     // user properties to update
-    const { name, bio } = req.body;
+    const { name } = req.body;
     // update user properties
     user.name = req.body.name || user.name;
-    user.bio = req.body.bio || user.bio;
 
     const updated = await user.save();
 
@@ -160,7 +154,6 @@ export const updateUser = asyncHandler(async (req, res) => {
       name: updated.name,
       email: updated.email,
       role: updated.role,
-      bio: updated.bio,
     });
   } else {
     // 404 Not Found
@@ -169,19 +162,39 @@ export const updateUser = asyncHandler(async (req, res) => {
 });
 
 // login status
+// export const userLoginStatus = asyncHandler(async (req, res) => {
+//   const token = req.cookies?.token;
+
+//   if (!token) {
+//     // 401 Unauthorized
+//     res.status(401).json({ message: "Not authorized, please login!" });
+//   }
+//   // verify the token
+//   const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+//   if (decoded) {
+//     res.status(200).json(true);
+//   } else {
+//     res.status(401).json(false);
+//   }
+// });
 export const userLoginStatus = asyncHandler(async (req, res) => {
-  const token = req.cookies.token;
+  const token = req.cookies?.token;
 
   if (!token) {
-    // 401 Unauthorized
-    res.status(401).json({ message: "Not authorized, please login!" });
+    return res.status(200).json({ isAuthenticated: false });
   }
-  // verify the token
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-  if (decoded) {
-    res.status(200).json(true);
-  } else {
-    res.status(401).json(false);
+  try {
+    // verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decoded) {
+      return res.status(200).json({ isAuthenticated: true });
+    } else {
+      return res.status(200).json({ isAuthenticated: false });
+    }
+  } catch (error) {
+    return res.status(200).json({ isAuthenticated: false });
   }
 });

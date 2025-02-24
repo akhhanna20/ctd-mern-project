@@ -20,7 +20,7 @@ export const createTask = asyncHandler(async (req, res) => {
       title,
       description,
       daysToComplete,
-      status,
+      status: status || "active",
       user: req.user._id,
     });
 
